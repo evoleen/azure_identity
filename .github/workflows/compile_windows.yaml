@@ -1,0 +1,28 @@
+name: Compile fetch_token for Windows
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0             # otherwise, you will fail to push refs to dest repo
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - run: npm -g install bun
+    - name: Compile fetch_token
+      working-directory: fetch_token
+      run: |
+        bun install
+        bun build ./fetch_token.js --compile --minify --outfile fetch_token.exe
+    - name: Commit & Push changes
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: 'fetch_token/fetch_token.exe'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
