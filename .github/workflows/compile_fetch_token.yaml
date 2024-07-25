@@ -41,6 +41,7 @@ jobs:
         add: 'fetch_token/fetch_token.macos.bin'
         pull: '--rebase --autostash'
   build-linux:
+    needs: build-macos
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
