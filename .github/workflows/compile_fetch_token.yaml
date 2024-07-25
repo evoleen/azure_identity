@@ -34,8 +34,8 @@ jobs:
       working-directory: fetch_token
       run: |
         bun install
-        bun build ./fetch_token.js --compile --minify --outfile fetch_token.exe
+        bun build ./fetch_token.js --compile --minify --outfile fetch_token.macos.bin
     - name: Commit & Push changes
       uses: EndBug/add-and-commit@v9
       with:
-        add: 'fetch_token/fetch_token.exe'
+        add: 'fetch_token/fetch_token.macos.bin'
