@@ -1,6 +1,7 @@
-import 'package:azure_identity/azure_identity.dart';
+import '../lib/azure_identity.dart';
 
-void main() {
-  var awesome = Awesome();
-  print('awesome: ${awesome.isAwesome}');
+Future<void> main() async {
+  final credential = BridgedDefaultAzureCredential();
+  final token = await credential.getToken();
+  print(token);
 }
