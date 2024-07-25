@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:azure_identity/azure_identity.dart';
 import 'package:jose/jose.dart';
@@ -13,23 +15,47 @@ import 'package:talker/talker.dart';
 /// suffer from an additional delay of about 2s while the token is requested.
 class BridgedDefaultAzureCredential implements TokenCredential {
   /// Location of the native binary that implements DefaultAzureCredential
-  final String defaultAzureCredentialBinary;
+  String _defaultAzureCredentialBinary = './fetch_token/fetch_token';
 
   Talker? logger;
 
-  BridgedDefaultAzureCredential({
-    this.defaultAzureCredentialBinary = '/app/bin/fetch_token',
-    this.logger,
+  BridgedDefaultAzureCredential._create({this.logger});
+
+  static Future<BridgedDefaultAzureCredential> create({
+    String? defaultAzureCredentialBinary,
+    Talker? logger,
   }) {
-    if (!File(defaultAzureCredentialBinary).existsSync()) {
-      throw Exception('fetch_token binary not found.');
+    final credentialInstance = _create(logger: logger);
+
+    if (defaultAzureCredentialBinary == null) {
+      String binaryName = 'fetch_token';
+
+      if (Platform.isLinux) {
+        binaryName = 'fetch_token.linux.bin';
+      } else if (Platform.isMacOS) {
+        binaryName = 'fetch_token.macos.bin';
+      } else {
+        throw Exception(
+            'Unsupported platform. BridgedAzureCredential() only supports Linux and macOS');
+      }
+
+      final packageUri =
+          Uri.parse('package:azure_identity/fetch_token/$binaryName');
+      final future = Isolate.resolvePackageUri(packageUri);
+      // ignore: deprecated_member_use
+      final absoluteUri = waitFor(future, timeout: const Duration(seconds: 5));
+    }
+
+    if (!File(_defaultAzureCredentialBinary).existsSync()) {
+      throw Exception(
+          'Broken package, could not find expected binary at location $_defaultAzureCredentialBinary');
     }
   }
 
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {
     final credentialBinary =
-        await Process.run(defaultAzureCredentialBinary, options?.scopes ?? []);
+        await Process.run(_defaultAzureCredentialBinary, options?.scopes ?? []);
 
     if (credentialBinary.exitCode != 0) {
       logger?.error(

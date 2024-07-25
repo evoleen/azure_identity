@@ -1,7 +1,20 @@
-import '../lib/azure_identity.dart';
+import 'package:azure_identity/azure_identity.dart';
+import 'package:talker/talker.dart';
 
 Future<void> main() async {
-  final credential = BridgedDefaultAzureCredential();
-  final token = await credential.getToken();
-  print(token);
+  // initialize DefaultAzureCredential with external token binary
+  final credentialManager = CredentialManager(
+    credential: BridgedDefaultAzureCredential(
+      logger: Talker(),
+    ),
+    options: GetTokenOptions(
+      scopes: [
+        'https://kimdevworkspace-kim-data.fhir.azurehealthcareapis.com/'
+      ],
+    ),
+  );
+
+  final token = await credentialManager.getAccessToken();
+
+  print(token?.token);
 }
