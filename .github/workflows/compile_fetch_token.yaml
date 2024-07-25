@@ -39,3 +39,20 @@ jobs:
       uses: EndBug/add-and-commit@v9
       with:
         add: 'fetch_token/fetch_token.macos.bin'
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - run: npm -g install bun
+    - name: Compile fetch_token
+      working-directory: fetch_token
+      run: |
+        bun install
+        bun build ./fetch_token.js --compile --minify --outfile fetch_token.linux.bin
+    - name: Commit & Push changes
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: 'fetch_token/fetch_token.linux.bin'
