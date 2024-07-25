@@ -19,16 +19,19 @@ class BridgedDefaultAzureCredential implements TokenCredential {
 
   Talker? logger;
 
-  BridgedDefaultAzureCredential._create({this.logger});
+  BridgedDefaultAzureCredential._create({required this.logger});
 
   static Future<BridgedDefaultAzureCredential> create({
     String? defaultAzureCredentialBinary,
     Talker? logger,
-  }) {
-    final credentialInstance = _create(logger: logger);
+  }) async {
+    final credentialInstance =
+        BridgedDefaultAzureCredential._create(logger: logger);
 
-    if (defaultAzureCredentialBinary == null) {
-      String binaryName = 'fetch_token';
+    String? binaryName = defaultAzureCredentialBinary;
+
+    if (binaryName == null) {
+      binaryName = 'fetch_token';
 
       if (Platform.isLinux) {
         binaryName = 'fetch_token.linux.bin';
@@ -41,15 +44,24 @@ class BridgedDefaultAzureCredential implements TokenCredential {
 
       final packageUri =
           Uri.parse('package:azure_identity/fetch_token/$binaryName');
-      final future = Isolate.resolvePackageUri(packageUri);
-      // ignore: deprecated_member_use
-      final absoluteUri = waitFor(future, timeout: const Duration(seconds: 5));
+
+      final resolvedUri = await Isolate.resolvePackageUri(packageUri);
+
+      if (resolvedUri == null) {
+        throw Exception('Unable to resolve internal package path.');
+      }
+
+      binaryName = resolvedUri.toFilePath();
     }
 
-    if (!File(_defaultAzureCredentialBinary).existsSync()) {
+    if (!File(binaryName).existsSync()) {
       throw Exception(
-          'Broken package, could not find expected binary at location $_defaultAzureCredentialBinary');
+          'Broken package, could not find expected binary at location $binaryName');
     }
+
+    credentialInstance._defaultAzureCredentialBinary = binaryName;
+
+    return credentialInstance;
   }
 
   @override
