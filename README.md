@@ -16,3 +16,9 @@ As the package depends on a cross-compiled NodeJS executable, only platforms sup
 - Linux
 
 Windows support is theoretically possible, but Bun crashes during installation. It is anticipated that this will be resolved with future Bun versions.
+
+## Integration
+
+The package ships with a compiled version of the `fetch_token` binary. If the final application is executed through the Dart interpreter, the package is able to automatically locate the platform-specific binary file and will execute it.
+
+If the final application is compiled to an executable, Dart is unable to package the `fetch_token` binary with the executable. The binary then needs to be added manually and path of the binary needs to be supplied to `BridgedDefaultAzureCredential()`.
