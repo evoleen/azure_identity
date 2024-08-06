@@ -19,6 +19,8 @@ class ManagedIdentityCredential2019 extends TokenCredential {
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {
     if (options == null || options.scopes.isEmpty) {
+      logger
+          ?.call('Cannot fetch token for Managed Identity 2019 without scope.');
       return null;
     }
 
@@ -28,6 +30,8 @@ class ManagedIdentityCredential2019 extends TokenCredential {
     final identityHeader = Platform.environment['IDENTITY_HEADER'] ?? '';
 
     if (identityEndpoint.isEmpty || identityHeader.isEmpty) {
+      logger?.call(
+          'Required environment variables for Managed Identity 2019 not found.');
       return null;
     }
 
@@ -48,6 +52,8 @@ class ManagedIdentityCredential2019 extends TokenCredential {
       );
 
       if (tokenResponse.statusCode != 200) {
+        logger?.call(
+            'Fetch token request for Managed Identity 2019 resulted in HTTP status code ${tokenResponse.statusCode}');
         return null;
       }
 
@@ -57,7 +63,10 @@ class ManagedIdentityCredential2019 extends TokenCredential {
         token: tokenJson['access_token'],
         expiresOnTimestamp: int.parse(tokenJson['expires_on']) * 1000,
       );
-    } catch (_) {}
+    } catch (e) {
+      logger?.call(
+          'Fetch token request for Managed Identity 2019 caused exception: $e');
+    }
 
     return null;
   }

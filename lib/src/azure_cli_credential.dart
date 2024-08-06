@@ -27,6 +27,8 @@ class AzureCliCredential extends TokenCredential {
     );
 
     if (tokenProcessResult.exitCode != 0) {
+      logger?.call(
+          'AZ CLI returned error code ${tokenProcessResult.exitCode}, either AZ CLI is not installed or "az login" needs to be run.');
       return null;
     }
 
