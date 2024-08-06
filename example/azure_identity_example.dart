@@ -3,6 +3,7 @@ import 'package:talker/talker.dart';
 
 Future<void> main() async {
   final logger = Talker();
+
   // create instance of DefaultAzureCredential using the bridge binary
   final defaultAzureCredential = DefaultAzureCredential(
     logger: logger.info,

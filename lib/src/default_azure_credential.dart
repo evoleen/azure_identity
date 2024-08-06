@@ -10,15 +10,16 @@ import 'package:azure_identity/azure_identity.dart';
 /// should provide a single token source for 75% of all use cases in
 /// development and managed deployment scenarios.
 class DefaultAzureCredential extends TokenCredential {
-  final chainedTokenCredential = ChainedTokenCredential(
-    credentials: [
-      ManagedIdentityCredential2019(),
-      ManagedIdentityCredential2017(),
-      AzureCliCredential(),
-    ],
-  );
+  final ChainedTokenCredential chainedTokenCredential;
 
-  DefaultAzureCredential({super.logger});
+  DefaultAzureCredential({super.logger})
+      : chainedTokenCredential = ChainedTokenCredential(
+          credentials: [
+            ManagedIdentityCredential2019(logger: logger),
+            ManagedIdentityCredential2017(logger: logger),
+            AzureCliCredential(logger: logger),
+          ],
+        );
 
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {

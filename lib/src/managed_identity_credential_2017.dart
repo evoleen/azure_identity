@@ -14,7 +14,7 @@ class ManagedIdentityCredential2017 extends TokenCredential {
   /// Constructs a new managed identity credential. If [dio] is passed, will
   /// use the externally configured instance of the Dio client. Otherwise
   /// will instantiate an instance with default options.
-  ManagedIdentityCredential2017({Dio? dio}) : _dio = dio ?? Dio();
+  ManagedIdentityCredential2017({Dio? dio, super.logger}) : _dio = dio ?? Dio();
 
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {

@@ -7,6 +7,8 @@ import 'package:azure_identity/src/token_credential.dart';
 /// in development settings where the user authenticated through `az login`
 /// has an IAM privilege with the target service.
 class AzureCliCredential extends TokenCredential {
+  AzureCliCredential({super.logger});
+
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {
     if (options == null || options.scopes.isEmpty) {
