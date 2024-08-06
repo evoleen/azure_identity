@@ -1,7 +1,4 @@
-import 'package:azure_identity/src/chained_token_credential.dart';
-import 'package:azure_identity/src/managed_identity_credential_2017.dart';
-import 'package:azure_identity/src/managed_identity_credential_2019.dart';
-import 'package:azure_identity/src/token_credential.dart';
+import 'package:azure_identity/azure_identity.dart';
 
 /// Stripped down version of the Azure SDK's DefaultAzureCredential.
 /// Will attempt the following authentication methods in sequence:
@@ -17,8 +14,11 @@ class DefaultAzureCredential extends TokenCredential {
     credentials: [
       ManagedIdentityCredential2019(),
       ManagedIdentityCredential2017(),
+      AzureCliCredential(),
     ],
   );
+
+  DefaultAzureCredential({super.logger});
 
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {

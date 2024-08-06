@@ -32,7 +32,7 @@ class AzureCliCredential extends TokenCredential {
 
     return AccessToken(
       token: tokenOutput['accessToken'],
-      expiresOnTimestamp: int.parse(tokenOutput['expires_on']) * 1000,
+      expiresOnTimestamp: tokenOutput['expires_on'] * 1000,
     );
   }
 }
