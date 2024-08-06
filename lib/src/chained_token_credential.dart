@@ -6,10 +6,10 @@ import 'package:azure_identity/azure_identity.dart';
 /// a unified implementation that works without changes in local development
 /// environments and in production environments, or if the authentication method
 /// is not fully known.
-class ChainedTokenCredential implements TokenCredential {
+class ChainedTokenCredential extends TokenCredential {
   final List<TokenCredential> credentials;
 
-  const ChainedTokenCredential({required this.credentials});
+  const ChainedTokenCredential({required this.credentials, super.logger});
 
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {

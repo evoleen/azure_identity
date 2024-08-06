@@ -6,7 +6,7 @@ import 'package:azure_identity/src/token_credential.dart';
 /// Attempts to acquire a token through running Azure CLI. Primarily useful
 /// in development settings where the user authenticated through `az login`
 /// has an IAM privilege with the target service.
-class AzureCliCredential implements TokenCredential {
+class AzureCliCredential extends TokenCredential {
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {
     if (options == null || options.scopes.isEmpty) {

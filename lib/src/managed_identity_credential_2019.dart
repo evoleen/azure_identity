@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 /// Acquires a token through the Azure Managed Identity service. Requires the
 /// process to be executed inside Azure and with "managed identity" enabled.
 /// Uses the 2019 API.
-class ManagedIdentityCredential2019 implements TokenCredential {
+class ManagedIdentityCredential2019 extends TokenCredential {
   final Dio _dio;
 
   static const String apiVersion = '2019-08-01';

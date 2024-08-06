@@ -1,5 +1,9 @@
 /// Represents a credential capable of providing an authentication token.
-abstract class TokenCredential {
+class TokenCredential {
+  final Function(String)? logger;
+
+  const TokenCredential({this.logger});
+
   /// Gets the token provided by this credential.
   ///
   /// This method is called automatically by Azure SDK client libraries. You may call this method
@@ -10,7 +14,9 @@ abstract class TokenCredential {
   ///             TokenCredential implementation might make.
   Future<AccessToken?> getToken({
     GetTokenOptions? options,
-  });
+  }) async {
+    throw Exception('Unimplemented');
+  }
 }
 
 /// Defines options for TokenCredential.getToken.

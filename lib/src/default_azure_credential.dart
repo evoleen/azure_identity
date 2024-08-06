@@ -12,7 +12,7 @@ import 'package:azure_identity/src/token_credential.dart';
 /// which are not implemented in this package yet. However, the current methods
 /// should provide a single token source for 75% of all use cases in
 /// development and managed deployment scenarios.
-class DefaultAzureCredential implements TokenCredential {
+class DefaultAzureCredential extends TokenCredential {
   final chainedTokenCredential = ChainedTokenCredential(
     credentials: [
       ManagedIdentityCredential2019(),
