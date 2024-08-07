@@ -4,7 +4,6 @@ import 'dart:isolate';
 
 import 'package:azure_identity/azure_identity.dart';
 import 'package:jose/jose.dart';
-import 'package:talker/talker.dart';
 
 /// This class implements DefaultAzureCredential by leveraging an external
 /// binary. The external binary needs to accept the list of scopes as command
@@ -13,17 +12,15 @@ import 'package:talker/talker.dart';
 /// be done rarely (once every 24h when deployed, once every 60 minutes for
 /// local debugging). The first request after the token timed out will probably
 /// suffer from an additional delay of about 2s while the token is requested.
-class BridgedDefaultAzureCredential implements TokenCredential {
+class BridgedDefaultAzureCredential extends TokenCredential {
   /// Location of the native binary that implements DefaultAzureCredential
   String _defaultAzureCredentialBinary = './fetch_token/fetch_token';
 
-  Talker? logger;
-
-  BridgedDefaultAzureCredential._create({required this.logger});
+  BridgedDefaultAzureCredential._create({super.logger});
 
   static Future<BridgedDefaultAzureCredential> create({
     String? defaultAzureCredentialBinary,
-    Talker? logger,
+    Function(String)? logger,
   }) async {
     final credentialInstance =
         BridgedDefaultAzureCredential._create(logger: logger);
@@ -70,7 +67,7 @@ class BridgedDefaultAzureCredential implements TokenCredential {
         await Process.run(_defaultAzureCredentialBinary, options?.scopes ?? []);
 
     if (credentialBinary.exitCode != 0) {
-      logger?.error(
+      logger?.call(
           'Unable to acquire token: Bridge binary exited with an error code.');
       return null;
     }
@@ -78,7 +75,7 @@ class BridgedDefaultAzureCredential implements TokenCredential {
     var tokenString = credentialBinary.stdout.toString().trim();
 
     if (!tokenString.startsWith("TOKEN=")) {
-      logger?.error(
+      logger?.call(
           'Unable to acquire token: Bridge binary returned an unexpected result');
       return null;
     }
@@ -91,7 +88,7 @@ class BridgedDefaultAzureCredential implements TokenCredential {
       final jwt = JsonWebToken.unverified(tokenString);
       final expiry = jwt.claims.expiry;
       if (expiry == null) {
-        logger?.error(
+        logger?.call(
             'Unable to acquire token: Token does not contain expiration');
         return null;
       }
@@ -100,7 +97,7 @@ class BridgedDefaultAzureCredential implements TokenCredential {
           token: tokenString,
           expiresOnTimestamp: expiry.millisecondsSinceEpoch);
     } catch (e) {
-      logger?.error('Unable to acquire token: Failed to decode token string');
+      logger?.call('Unable to acquire token: Failed to decode token string');
       return null;
     }
   }
