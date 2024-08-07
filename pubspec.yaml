@@ -1,16 +1,13 @@
 name: azure_identity
-description: A starting point for Dart libraries or applications.
-version: 0.0.1
-# repository: https://github.com/my_org/my_repo
+description: A (partial) Dart implementation of the Azure Identity SDK
+version: 0.0.2
+repository: https://github.com/evoleen/azure_identity
 environment:
   sdk: ^3.4.3
 
 # Add regular dependencies here.
 dependencies:
   dio: ^5.5.0+1
-  jose: ^0.3.4
-  talker: ^4.3.4
-# path: ^1.8.0
 dev_dependencies:
   lints: ^3.0.0
   test: ^1.24.0
