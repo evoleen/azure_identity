@@ -1,7 +1,0 @@
-builders:
-  copyBuilder:
-    import: "package:azure_identity/builder.dart"
-    builder_factories: ["nodeJsBuilder"]
-    build_extensions: {".js": [".js.bin"]}
-    build_to: source
-    auto_apply: root_package
