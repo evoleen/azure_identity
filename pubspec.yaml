@@ -1,6 +1,6 @@
 name: azure_identity
 description: A (partial) Dart implementation of the Azure Identity SDK
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/evoleen/azure_identity
 environment:
   sdk: ^3.4.3

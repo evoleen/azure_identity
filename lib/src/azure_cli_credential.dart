@@ -17,26 +17,31 @@ class AzureCliCredential extends TokenCredential {
 
     final resource = options.scopes.first;
 
-    final tokenProcessResult = await Process.run(
-      'az',
-      [
-        'account',
-        'get-access-token',
-        '--resource=$resource',
-      ],
-    );
+    try {
+      final tokenProcessResult = await Process.run(
+        'az',
+        [
+          'account',
+          'get-access-token',
+          '--resource=$resource',
+        ],
+      );
 
-    if (tokenProcessResult.exitCode != 0) {
-      logger?.call(
-          'AZ CLI returned error code ${tokenProcessResult.exitCode}, either AZ CLI is not installed or "az login" needs to be run.');
+      if (tokenProcessResult.exitCode != 0) {
+        logger?.call(
+            'AZ CLI returned error code ${tokenProcessResult.exitCode}, either AZ CLI is not installed or "az login" needs to be run.');
+        return null;
+      }
+
+      final tokenOutput = jsonDecode(tokenProcessResult.stdout.toString());
+
+      return AccessToken(
+        token: tokenOutput['accessToken'],
+        expiresOnTimestamp: tokenOutput['expires_on'] * 1000,
+      );
+    } catch (e) {
+      logger?.call('Unable to execute AZ CLI: $e');
       return null;
     }
-
-    final tokenOutput = jsonDecode(tokenProcessResult.stdout.toString());
-
-    return AccessToken(
-      token: tokenOutput['accessToken'],
-      expiresOnTimestamp: tokenOutput['expires_on'] * 1000,
-    );
   }
 }

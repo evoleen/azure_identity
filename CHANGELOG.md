@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Don't crash in `AzureCliCredential()` if Azure CLI is not available
+
 ## 0.0.3
 
 - Remove obsolete build.yaml that could block code generators
