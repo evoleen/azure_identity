@@ -1,3 +1,7 @@
+## 0.0.5+1
+
+- Fix missing class exports
+
 ## 0.0.5
 
 - Add `ProxiedAzureCliCredential()` to enable Azure Identity from locally running Docker containers
