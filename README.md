@@ -12,5 +12,6 @@ The current code is pure native Dart code and supports the following credentials
 - Managed Identity 2017 API version
 - Managed Identity 2019 API version
 - Azure CLI credential
+- Proxied Azure CLI credential (custom addition to enable locally running Docker containers to use Azure Identity)
 - Chained credential
 - Default credential (a chained credential of Managed Identity 2017, Managed Identity 2019, Azure CLI)

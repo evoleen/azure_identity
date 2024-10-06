@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Add `ProxiedAzureCliCredential()` to enable Azure Identity from locally running Docker containers
+
 ## 0.0.4
 
 - Don't crash in `AzureCliCredential()` if Azure CLI is not available

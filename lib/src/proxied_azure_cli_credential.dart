@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:azure_identity/src/token_credential.dart';
 
 /// Attempts to acquire a token through a proxied instance of Azure CLI.
-/// The output of Azure CLI is expected at http://localhost:8181 by default
-/// and can be overridden by setting the environment variable
+/// The output of Azure CLI is expected at http://host.docker.internal:8181
+/// by default and can be overridden by setting the environment variable
 /// AZURE_CLI_PROXY_HOST. This token is intended to be used in development
 /// settings where the application is running locally inside a Docker container
 /// but does not have access to Azure CLI inside the container.
