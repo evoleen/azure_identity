@@ -29,7 +29,7 @@ class ProxiedAzureCliCredential extends TokenCredential {
 
       final response = await http.get(Uri.parse(proxyHost));
       if (response.statusCode != 200) {
-        logger?.call('Unable to access token proxy at http://localhost:8181.');
+        logger?.call('Unable to access token proxy at $proxyHost.');
         return null;
       }
 
