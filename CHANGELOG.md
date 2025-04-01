@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Allow finding the Azure CLI binary even without access to PATH
+
 ## 0.0.5+1
 
 - Fix missing class exports
