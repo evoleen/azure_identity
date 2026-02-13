@@ -39,13 +39,39 @@ class AzureCliCredential extends TokenCredential {
     return 'az';
   }
 
+  /// Determines whether the given [value] is a v2 OAuth scope or a v1
+  /// resource URI.
+  ///
+  /// A v2 scope contains a permission suffix appended to the base URI
+  /// (e.g. `api://my-app/.default`, `api://my-app/access`,
+  /// `https://graph.microsoft.com/User.Read`).
+  ///
+  /// A v1 resource is a bare URI with no meaningful path segments
+  /// (e.g. `api://my-app`, `https://management.azure.com/`).
+  ///
+  /// The distinction matters because Azure CLI's `az account get-access-token`
+  /// requires `--scope` for v2 scopes and `--resource` for v1 resources.
+  /// Passing a v2 scope to `--resource` fails because Azure CLI treats the
+  /// entire string (including the suffix) as a literal resource name.
+  static bool _isV2Scope(String value) {
+    final uri = Uri.tryParse(value);
+    if (uri == null) return false;
+
+    // A v2 scope has non-empty path segments (e.g. '.default' or 'access').
+    // A bare resource URI has no path or only a trailing slash (empty segment).
+    final hasPathSegments =
+        uri.pathSegments.any((segment) => segment.isNotEmpty);
+    return hasPathSegments;
+  }
+
   @override
   Future<AccessToken?> getToken({GetTokenOptions? options}) async {
     if (options == null || options.scopes.isEmpty) {
       return null;
     }
 
-    final resource = options.scopes.first;
+    final value = options.scopes.first;
+    final cliFlag = _isV2Scope(value) ? '--scope' : '--resource';
 
     try {
       final tokenProcessResult = await Process.run(
@@ -53,13 +79,15 @@ class AzureCliCredential extends TokenCredential {
         [
           'account',
           'get-access-token',
-          '--resource=$resource',
+          '$cliFlag=$value',
         ],
       );
 
       if (tokenProcessResult.exitCode != 0) {
         logger?.call(
-            'AZ CLI returned error code ${tokenProcessResult.exitCode}, either AZ CLI is not installed or "az login" needs to be run.');
+            'AZ CLI returned error code ${tokenProcessResult.exitCode}. '
+            'Command: $_azureCliPath account get-access-token $cliFlag=$value. '
+            'stderr: ${tokenProcessResult.stderr}');
         return null;
       }
 
