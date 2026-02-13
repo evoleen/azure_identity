@@ -1,3 +1,7 @@
+## 0.0.7
+
+- Automatically switch between v1 and v2 tokens
+
 ## 0.0.6
 
 - Allow finding the Azure CLI binary even without access to PATH
